@@ -1,25 +1,56 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>AR Test</title>
 
+    <!-- A-Frame -->
     <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+
+    <!-- AR.js -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <!-- A-Frame Extras -->
     <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.7.0/dist/aframe-extras.min.js"></script>
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/style.css">
 </head>
-<body style="margin: 0; overflow: hidden;">
+<body>
 
-<a-scene embedded arjs="debugUIEnabled:false;" renderer="gammaOutput: true;" vr-mode-ui="enabled: false">
-            <a-assets>
-                <a-asset-item id="sexmaster" src="./sexmaster.glb"></a-asset-item>
-            </a-assets>
-            <a-marker preset="custom" type='pattern' url="pattern-marker.patt">
-              <a-entity gltf-model="#sexmaster" scale="1 1 1" rotation="-20 0 0" animation-mixer></a-entity>
-            </a-marker>
-            <a-entity camera></a-entity>
-        </a-scene>
+    <!-- AR操作UI -->
+    <div id="ar-controls">
+
+        <button id="scale-down">−</button>
+
+        <span id="scale-value">100%</span>
+
+        <button id="scale-up">＋</button>
+
+    </div>
+
+
+    <!-- ARscene -->
+    <a-scene embedded arjs="debugUIEnabled:false;" renderer="gammaOutput: true;" vr-mode-ui="enabled: false">
+        <!-- assets -->
+        <a-assets>
+            <a-asset-item id="sexmaster" src="./models/sexmaster.glb"></a-asset-item>
+        </a-assets>
+
+        <!-- marker -->
+        <a-marker id="ar-marker" preset="custom" type="pattern" url="./markers/pattern-marker.patt">
+            <!-- ARmodel -->
+            <a-entity id="ar-model" gltf-model="#sexmaster" scale="1 1 1" rotation="-20 0 0" animation-mixer> </a-entity>
+        </a-marker>
+
+        <!-- camera -->
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- JavaScript -->
+    <script src="./js/ar-controller.js"></script>
 
 </body>
 </html>
