@@ -53,42 +53,19 @@ const ScreenshotController = {
 
     capture() {
 
-        const video = document.querySelector("video");
-        const arCanvas = this.scene.canvas;
+    const arCanvas = this.scene.canvas;
 
-        if (!video) {
-            console.error("カメラ映像が見つかりません");
-            return;
-        }
+    const image =
+        arCanvas.toDataURL("image/png");
 
-        if (!arCanvas) {
-            console.error("A-FrameのCanvasが見つかりません");
-            return;
-        }
+    const link =
+        document.createElement("a");
 
-        // 合成用Canvas
-        const canvas = document.createElement("canvas");
+    link.href = image;
+    link.download = "ar-only.png";
 
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-
-        const ctx = canvas.getContext("2d");
-
-        // カメラ映像を描画
-        ctx.drawImage(video,0,0,canvas.width,canvas.height);
-
-        // ARモデルを描画
-        ctx.drawImage(arCanvas,0,0,canvas.width,canvas.height);
-
-        // PNGとして保存
-        const image = canvas.toDataURL("image/png");
-        const link = document.createElement("a");
-
-        link.href = image;
-        link.download = "ar-screenshot.png";
-
-        link.click();
-    }
+    link.click();
+}
 };
 
 /**
