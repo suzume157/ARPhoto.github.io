@@ -52,54 +52,75 @@ const ScreenshotController = {
 
 
     capture() {
-        const video = document.querySelector("video");
-        if (!video) {
-            console.error("カメラ映像が見つかりません");
-            return;
-        }
 
-        /*カメラ映像をCanvasにコピー*/
-        const canvas =document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
+    const viewport =
+        document.querySelector('meta[name="viewport"]');
 
-        canvas.width =video.videoWidth;
-        canvas.height = video.videoHeight;
+    // 元のviewportを保存
+    const originalViewport =
+        viewport.getAttribute("content");
 
-        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+    // 一時的に固定幅にする
+    viewport.setAttribute(
+        "content",
+        "width=800"
+    );
 
-        /*カメラ映像をvideoの背景に設定*/
-        video.style.backgroundImage = `url(${canvas.toDataURL("image/png")})`;
 
-        video.style.backgroundSize = "cover";
+    html2canvas(document.body, {
 
-        /*A-Frameを再描画*/
-        this.scene.renderer.render(
-            this.scene.object3D,
-            this.scene.camera
+        width: window.innerWidth,
+        height: window.innerHeight,
+
+        windowWidth: window.innerWidth,
+        windowHeight: window.innerHeight,
+
+        useCORS: true,
+
+        scale: 1,
+
+        backgroundColor: null
+
+    })
+    .then((canvas) => {
+
+        // viewportを元に戻す
+        viewport.setAttribute(
+            "content",
+            originalViewport
         );
 
-        /*HTML全体をスクリーンショット*/
-        html2canvas(document.body, {
-            width: document.documentElement.offsetWidth,
-            height: document.documentElement.offsetHeight,
-            useCORS: true
-        }).then((resultCanvas) => {
-            /*PNGに変換*/
-            const image = resultCanvas.toDataURL("image/png");
-            /*保存*/
-            const link = document.createElement("a");
-            link.href = image;
-            
-            /*現在日時を取得*/
-            const now = new Date();
-            const fileName = `ar-screenshot-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}.png`;
-            link.download = fileName;
-            link.click();
-            
-        }).catch((error) => {
-            console.error("スクリーンショットに失敗しました:",error);
-        });
-    }
+
+        const image =
+            canvas.toDataURL("image/png");
+
+
+        const link =
+            document.createElement("a");
+
+        link.href = image;
+
+        link.download =
+            `ar-screenshot-${Date.now()}.png`;
+
+        link.click();
+
+    })
+    .catch((error) => {
+
+        // エラーでもviewportを元に戻す
+        viewport.setAttribute(
+            "content",
+            originalViewport
+        );
+
+        console.error(
+            "スクリーンショット失敗:",
+            error
+        );
+
+    });
+}
 };
 
 /**
