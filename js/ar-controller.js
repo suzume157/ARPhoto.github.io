@@ -53,22 +53,36 @@ const ScreenshotController = {
 
     capture() {
 
-    const uiElements = document.querySelectorAll(".screenshot-ignore");
+    // スクリーンショットに含めないUIを取得
+    const uiElements =
+        document.querySelectorAll(".screenshot-ignore");
+
+
+    // UIを非表示
     for (const element of uiElements) {
         element.style.display = "none";
     }
 
-    const viewport = document.querySelector('meta[name="viewport"]');
+
+    // viewportを取得
+    const viewport =
+        document.querySelector('meta[name="viewport"]');
+
 
     // 元のviewportを保存
     const originalViewport =
         viewport.getAttribute("content");
 
-    // 一時的に固定幅にする
-    viewport.setAttribute("content","width=800");
+
+    // iPhone Safari対策
+    viewport.setAttribute(
+        "content",
+        "width=800"
+    );
 
 
     html2canvas(document.body, {
+
         width: window.innerWidth,
         height: window.innerHeight,
 
@@ -84,36 +98,58 @@ const ScreenshotController = {
     })
     .then(function(canvas) {
 
-    // viewportを元に戻す
-    viewport.setAttribute("content",originalViewport);
+        // viewportを元に戻す
+        viewport.setAttribute(
+            "content",
+            originalViewport
+        );
 
-    // UIを再表示
-    for (const element of uiElements) {
-        element.style.display = "";
-    }
 
-    // PNG画像に変換
-    const image = canvas.toDataURL("image/png");
+        // UIを再表示
+        for (const element of uiElements) {
+            element.style.display = "";
+        }
 
-    // ダウンロード用リンク
-    const link = document.createElement("a");
 
-    link.href = image;
-    link.download = `ar-screenshot-${Date.now()}.png`;
-    link.click();
+        // PNGに変換
+        const image =
+            canvas.toDataURL("image/png");
 
-})
-.catch(function(error) {
-    // エラーでもviewportを元に戻す
-    viewport.setAttribute("content",originalViewport);
 
-    // UIを再表示
-    for (const element of uiElements) {
-        element.style.display = "";
-    }
-    console.error("スクリーンショット失敗:",error);
+        // ダウンロード
+        const link =
+            document.createElement("a");
+
+        link.href = image;
+
+        link.download =
+            `ar-screenshot-${Date.now()}.png`;
+
+        link.click();
+
+    })
+    .catch(function(error) {
+
+        // viewportを元に戻す
+        viewport.setAttribute(
+            "content",
+            originalViewport
+        );
+
+
+        // UIを再表示
+        for (const element of uiElements) {
+            element.style.display = "";
+        }
+
+
+        console.error(
+            "スクリーンショット失敗:",
+            error
+        );
+
+    });
 }
-};
 
 /**
  * ページ読み込み後に初期化
