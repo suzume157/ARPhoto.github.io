@@ -54,8 +54,7 @@ const ScreenshotController = {
     capture() {
 
     // スクリーンショットに含めないUIを取得
-    const uiElements =
-        document.querySelectorAll(".screenshot-ignore");
+    const uiElements = document.querySelectorAll(".screenshot-ignore");
 
 
     // UIを非表示
@@ -65,24 +64,17 @@ const ScreenshotController = {
 
 
     // viewportを取得
-    const viewport =
-        document.querySelector('meta[name="viewport"]');
+    const viewport = document.querySelector('meta[name="viewport"]');
 
 
     // 元のviewportを保存
-    const originalViewport =
-        viewport.getAttribute("content");
+    const originalViewport = viewport.getAttribute("content");
 
 
     // iPhone Safari対策
-    viewport.setAttribute(
-        "content",
-        "width=800"
-    );
-
+    viewport.setAttribute("content","width=800");
 
     html2canvas(document.body, {
-
         width: window.innerWidth,
         height: window.innerHeight,
 
@@ -99,11 +91,7 @@ const ScreenshotController = {
     .then(function(canvas) {
 
         // viewportを元に戻す
-        viewport.setAttribute(
-            "content",
-            originalViewport
-        );
-
+        viewport.setAttribute("content",originalViewport);
 
         // UIを再表示
         for (const element of uiElements) {
@@ -112,18 +100,15 @@ const ScreenshotController = {
 
 
         // PNGに変換
-        const image =
-            canvas.toDataURL("image/png");
+        const image = canvas.toDataURL("image/png");
 
 
         // ダウンロード
-        const link =
-            document.createElement("a");
+        const link = document.createElement("a");
 
         link.href = image;
 
-        link.download =
-            `ar-screenshot-${Date.now()}.png`;
+        link.download = `ar-screenshot-${Date.now()}.png`;
 
         link.click();
 
@@ -131,10 +116,7 @@ const ScreenshotController = {
     .catch(function(error) {
 
         // viewportを元に戻す
-        viewport.setAttribute(
-            "content",
-            originalViewport
-        );
+        viewport.setAttribute("content",originalViewport);
 
 
         // UIを再表示
@@ -143,13 +125,10 @@ const ScreenshotController = {
         }
 
 
-        console.error(
-            "スクリーンショット失敗:",
-            error
-        );
-
+        console.error("スクリーンショット失敗:",error);
     });
 }
+};
 
 /**
  * ページ読み込み後に初期化
