@@ -43,29 +43,128 @@ const ARModelController = {
 const ScreenshotController = {
 
     init() {
-        this.button = document.getElementById("screenshot-button");
-        this.scene = document.querySelector("a-scene");
+
+        this.button =
+            document.getElementById("screenshot-button");
+
+        this.scene =
+            document.querySelector("a-scene");
+
         this.button.addEventListener("click", () => {
+
             this.capture();
+
         });
     },
 
 
     capture() {
 
-    const arCanvas = this.scene.canvas;
+        const video =
+            document.querySelector("video");
 
-    const image =
-        arCanvas.toDataURL("image/png");
+        if (!video) {
 
-    const link =
-        document.createElement("a");
+            console.error(
+                "カメラ映像が見つかりません"
+            );
 
-    link.href = image;
-    link.download = "ar-only.png";
+            return;
+        }
 
-    link.click();
-}
+
+        /*
+         * カメラ映像をCanvasにコピー
+         */
+        const canvas =
+            document.createElement("canvas");
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        canvas.width =
+            video.videoWidth;
+
+        canvas.height =
+            video.videoHeight;
+
+
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        /*
+         * カメラ映像をvideoの背景に設定
+         */
+        video.style.backgroundImage =
+            `url(${canvas.toDataURL("image/png")})`;
+
+        video.style.backgroundSize =
+            "cover";
+
+
+        /*
+         * A-Frameを再描画
+         */
+        this.scene.renderer.render(
+            this.scene.object3D,
+            this.scene.camera
+        );
+
+
+        /*
+         * HTML全体をスクリーンショット
+         */
+        html2canvas(document.body, {
+
+            width:
+                document.documentElement.offsetWidth,
+
+            height:
+                document.documentElement.offsetHeight,
+
+            useCORS: true
+
+        }).then((resultCanvas) => {
+
+
+            /*
+             * PNGに変換
+             */
+            const image =
+                resultCanvas.toDataURL(
+                    "image/png"
+                );
+
+
+            /*
+             * 保存
+             */
+            const link =
+                document.createElement("a");
+
+            link.href = image;
+
+            link.download =
+                "ar-screenshot.png";
+
+            link.click();
+
+        }).catch((error) => {
+
+            console.error(
+                "スクリーンショットに失敗しました:",
+                error
+            );
+
+        });
+    }
 };
 
 /**
