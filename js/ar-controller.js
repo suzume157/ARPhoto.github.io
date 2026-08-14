@@ -72,7 +72,7 @@ const ScreenshotController = {
 
 
     // iPhone Safari対策
-    viewport.setAttribute("content","width=800");
+    //viewport.setAttribute("content","width=800");
 
     html2canvas(document.body, {
         width: window.innerWidth,
@@ -86,7 +86,6 @@ const ScreenshotController = {
         scale: 1,
 
         backgroundColor: null
-
     })
     .then(function(canvas) {
 
