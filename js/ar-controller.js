@@ -40,15 +40,61 @@ const ARModelController = {
     }
 };
 
+const ScreenshotController = {
+
+    init() {
+        this.button = document.getElementById("screenshot-button");
+        this.scene = document.querySelector("a-scene");
+        this.button.addEventListener("click", () => {
+            this.capture();
+        });
+    },
+
+
+    capture() {
+
+        const video = document.querySelector("video");
+        const arCanvas = this.scene.canvas;
+
+        if (!video) {
+            console.error("カメラ映像が見つかりません");
+            return;
+        }
+
+        if (!arCanvas) {
+            console.error("A-FrameのCanvasが見つかりません");
+            return;
+        }
+
+        // 合成用Canvas
+        const canvas = document.createElement("canvas");
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        const ctx = canvas.getContext("2d");
+
+        // カメラ映像を描画
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+
+        // ARモデルを描画
+        ctx.drawImage(arCanvas,0,0,canvas.width,canvas.height);
+
+        // PNGとして保存
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+
+        link.href = image;
+        link.download = "ar-screenshot.png";
+
+        link.click();
+    }
+};
 
 /**
  * ページ読み込み後に初期化
  */
 window.addEventListener("DOMContentLoaded", () => {
     ARModelController.init();
+    ScreenshotController.init();
 });
-
-document.getElementById("screenshot-button").addEventListener("click", () => {
-        const scene = document.querySelector("a-scene");
-        scene.components.screenshot.capture("perspective");
-    });
