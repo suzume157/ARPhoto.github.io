@@ -53,22 +53,22 @@ const ScreenshotController = {
 
     capture() {
 
-    const viewport =
-        document.querySelector('meta[name="viewport"]');
+    const uiElements = document.querySelectorAll(".screenshot-ignore");
+    for (const element of uiElements) {
+        element.style.display = "none";
+    }
+
+    const viewport = document.querySelector('meta[name="viewport"]');
 
     // 元のviewportを保存
     const originalViewport =
         viewport.getAttribute("content");
 
     // 一時的に固定幅にする
-    viewport.setAttribute(
-        "content",
-        "width=800"
-    );
+    viewport.setAttribute("content","width=800");
 
 
     html2canvas(document.body, {
-
         width: window.innerWidth,
         height: window.innerHeight,
 
@@ -82,44 +82,36 @@ const ScreenshotController = {
         backgroundColor: null
 
     })
-    .then((canvas) => {
+    .then(function(canvas) {
 
-        // viewportを元に戻す
-        viewport.setAttribute(
-            "content",
-            originalViewport
-        );
+    // viewportを元に戻す
+    viewport.setAttribute("content",originalViewport);
 
+    // UIを再表示
+    for (const element of uiElements) {
+        element.style.display = "";
+    }
 
-        const image =
-            canvas.toDataURL("image/png");
+    // PNG画像に変換
+    const image = canvas.toDataURL("image/png");
 
+    // ダウンロード用リンク
+    const link = document.createElement("a");
 
-        const link =
-            document.createElement("a");
+    link.href = image;
+    link.download = `ar-screenshot-${Date.now()}.png`;
+    link.click();
 
-        link.href = image;
+})
+.catch(function(error) {
+    // エラーでもviewportを元に戻す
+    viewport.setAttribute("content",originalViewport);
 
-        link.download =
-            `ar-screenshot-${Date.now()}.png`;
-
-        link.click();
-
-    })
-    .catch((error) => {
-
-        // エラーでもviewportを元に戻す
-        viewport.setAttribute(
-            "content",
-            originalViewport
-        );
-
-        console.error(
-            "スクリーンショット失敗:",
-            error
-        );
-
-    });
+    // UIを再表示
+    for (const element of uiElements) {
+        element.style.display = "";
+    }
+    console.error("スクリーンショット失敗:",error);
 }
 };
 
