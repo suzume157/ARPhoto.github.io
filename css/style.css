@@ -1,5 +1,3 @@
-
-/* 操作ボタン */
 #ar-controls {
     position: fixed;
 
@@ -13,32 +11,35 @@
     gap: 15px;
 
     z-index: 99999 !important;
-}
 
-#ar-controls button {
-    width: 70px;
-    height: 70px;
+    padding: 10px 15px;
 
-    font-size: 32px;
-    font-weight: bold;
-
-    border: 2px solid black;
     border-radius: 10px;
 
-    background: white;
-    color: black;
-
-    opacity: 1;
-
-    touch-action: manipulation;
+    background: rgba(0, 0, 0, 0.5);
 }
 
 #scale-value {
+    min-width: 55px;
+
     color: white;
-    font-size: 20px;
+
+    font-size: 18px;
     font-weight: bold;
+
+    text-align: center;
 
     text-shadow:
         1px 1px 3px black,
         -1px -1px 3px black;
+}
+
+
+/* スライダー */
+#scale-slider {
+    width: 220px;
+
+    height: 30px;
+
+    touch-action: manipulation;
 }
