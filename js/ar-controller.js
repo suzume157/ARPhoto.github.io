@@ -43,126 +43,61 @@ const ARModelController = {
 const ScreenshotController = {
 
     init() {
-
-        this.button =
-            document.getElementById("screenshot-button");
-
-        this.scene =
-            document.querySelector("a-scene");
-
+        this.button = document.getElementById("screenshot-button");
+        this.scene = document.querySelector("a-scene");
         this.button.addEventListener("click", () => {
-
             this.capture();
-
         });
     },
 
 
     capture() {
-
-        const video =
-            document.querySelector("video");
-
+        const video = document.querySelector("video");
         if (!video) {
-
-            console.error(
-                "カメラ映像が見つかりません"
-            );
-
+            console.error("カメラ映像が見つかりません");
             return;
         }
 
+        /*カメラ映像をCanvasにコピー*/
+        const canvas =document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
 
-        /*
-         * カメラ映像をCanvasにコピー
-         */
-        const canvas =
-            document.createElement("canvas");
+        canvas.width =video.videoWidth;
+        canvas.height = video.videoHeight;
 
-        const ctx =
-            canvas.getContext("2d");
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
 
+        /*カメラ映像をvideoの背景に設定*/
+        video.style.backgroundImage = `url(${canvas.toDataURL("image/png")})`;
 
-        canvas.width =
-            video.videoWidth;
+        video.style.backgroundSize = "cover";
 
-        canvas.height =
-            video.videoHeight;
-
-
-        ctx.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        /*
-         * カメラ映像をvideoの背景に設定
-         */
-        video.style.backgroundImage =
-            `url(${canvas.toDataURL("image/png")})`;
-
-        video.style.backgroundSize =
-            "cover";
-
-
-        /*
-         * A-Frameを再描画
-         */
+        /*A-Frameを再描画*/
         this.scene.renderer.render(
             this.scene.object3D,
             this.scene.camera
         );
 
-
-        /*
-         * HTML全体をスクリーンショット
-         */
+        /*HTML全体をスクリーンショット*/
         html2canvas(document.body, {
-
-            width:
-                document.documentElement.offsetWidth,
-
-            height:
-                document.documentElement.offsetHeight,
-
+            width: document.documentElement.offsetWidth,
+            height: document.documentElement.offsetHeight,
             useCORS: true
-
         }).then((resultCanvas) => {
-
-
-            /*
-             * PNGに変換
-             */
-            const image =
-                resultCanvas.toDataURL(
-                    "image/png"
-                );
-
-
-            /*
-             * 保存
-             */
-            const link =
-                document.createElement("a");
-
+            /*PNGに変換*/
+            const image = resultCanvas.toDataURL("image/png");
+            /*保存*/
+            const link = document.createElement("a");
             link.href = image;
-
-            link.download =
-                "ar-screenshot.png";
-
+            
+            /*現在日時を取得*/
+            const now = new Date();
+            const fileName = `ar-screenshot-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}${String(now.getSeconds()).padStart(2, "0")}.png`;
+            link.download = fileName;
             link.click();
-
+            
         }).catch((error) => {
-
-            console.error(
-                "スクリーンショットに失敗しました:",
-                error
-            );
-
+            console.error("スクリーンショットに失敗しました:",error);
         });
     }
 };
