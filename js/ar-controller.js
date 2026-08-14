@@ -36,7 +36,6 @@ const ARModelController = {
     updateModelScale() {
 
         this.model.setAttribute("scale",`${this.scale} ${this.scale} ${this.scale}`);
-
         this.scaleValue.textContent =`${Math.round(this.scale * 100)}%`;
     }
 };
@@ -46,7 +45,10 @@ const ARModelController = {
  * ページ読み込み後に初期化
  */
 window.addEventListener("DOMContentLoaded", () => {
-
     ARModelController.init();
-
 });
+
+document.getElementById("screenshot-button").addEventListener("click", () => {
+        const scene = document.querySelector("a-scene");
+        scene.components.screenshot.capture("perspective");
+    });
