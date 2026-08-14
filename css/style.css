@@ -1,3 +1,8 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+
 /* 操作ボタン */
 #ar-controls {
     position: fixed;
