@@ -37,9 +37,10 @@
 
 /* スライダー */
 #scale-slider {
-    width: 220px;
+    width: 200px;
 
     height: 30px;
 
     touch-action: manipulation;
+    transform: rotate(-90deg);
 }
