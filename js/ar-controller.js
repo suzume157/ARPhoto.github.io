@@ -43,90 +43,139 @@ const ARModelController = {
 const ScreenshotController = {
 
     init() {
-        this.button = document.getElementById("screenshot-button");
-        this.scene = document.querySelector("a-scene");
-        this.button.addEventListener("click", () => {
-            this.capture();
-        });
+
+        this.button =
+            document.getElementById("screenshot-button");
+
+        this.scene =
+            document.querySelector("a-scene");
+
+
+        this.button.addEventListener(
+            "click",
+            () => {
+
+                this.capture();
+
+            }
+        );
     },
 
 
     capture() {
 
-    // スクリーンショットに含めないUIを取得
-    const uiElements = document.querySelectorAll(".screenshot-ignore");
+        const uiElements =
+            document.querySelectorAll(
+                ".screenshot-ignore"
+            );
 
 
-    // UIを非表示
-    for (const element of uiElements) {
-        element.style.display = "none";
-    }
-
-
-    // viewportを取得
-    const viewport = document.querySelector('meta[name="viewport"]');
-
-
-    // 元のviewportを保存
-    const originalViewport = viewport.getAttribute("content");
-
-
-    // iPhone Safari対策
-    //viewport.setAttribute("content","width=800");
-
-    html2canvas(document.body, {
-        width: window.innerWidth,
-        height: window.innerHeight,
-
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight,
-
-        useCORS: true,
-
-        scale: 1,
-
-        backgroundColor: null
-    })
-    .then(function(canvas) {
-
-        // viewportを元に戻す
-        viewport.setAttribute("content",originalViewport);
-
-        // UIを再表示
+        // UIを非表示
         for (const element of uiElements) {
-            element.style.display = "";
+
+            element.style.display = "none";
+
         }
 
 
-        // PNGに変換
-        const image = canvas.toDataURL("image/png");
+        const video =
+            document.querySelector("video");
+
+        const arCanvas =
+            this.scene.canvas;
 
 
-        // ダウンロード
-        const link = document.createElement("a");
+        if (!video) {
+
+            console.error(
+                "カメラ映像が見つかりません"
+            );
+
+            this.showUI(uiElements);
+
+            return;
+        }
+
+
+        if (!arCanvas) {
+
+            console.error(
+                "A-FrameのCanvasが見つかりません"
+            );
+
+            this.showUI(uiElements);
+
+            return;
+        }
+
+
+        // 出力Canvas
+        const canvas =
+            document.createElement("canvas");
+
+
+        canvas.width =
+            video.videoWidth;
+
+        canvas.height =
+            video.videoHeight;
+
+
+        const ctx =
+            canvas.getContext("2d");
+
+
+        // カメラ映像を描画
+        ctx.drawImage(
+            video,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        // ARモデルを描画
+        ctx.drawImage(
+            arCanvas,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+        );
+
+
+        // UIを再表示
+        this.showUI(uiElements);
+
+
+        // PNGとして保存
+        const image =
+            canvas.toDataURL("image/png");
+
+
+        const link =
+            document.createElement("a");
+
 
         link.href = image;
 
-        link.download = `ar-screenshot-${Date.now()}.png`;
+        link.download =
+            `ar-screenshot-${Date.now()}.png`;
+
 
         link.click();
-
-    })
-    .catch(function(error) {
-
-        // viewportを元に戻す
-        viewport.setAttribute("content",originalViewport);
+    },
 
 
-        // UIを再表示
+    showUI(uiElements) {
+
         for (const element of uiElements) {
+
             element.style.display = "";
+
         }
-
-
-        console.error("スクリーンショット失敗:",error);
-    });
-}
+    }
 };
 
 /**
