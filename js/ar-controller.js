@@ -67,139 +67,130 @@ const ScreenshotController = {
         const uiElements =
             document.querySelectorAll(".screenshot-ignore");
 
-
         // UIを非表示
         for (const element of uiElements) {
             element.style.display = "none";
         }
 
-        //カメラから見える画像の取得
+
         const video =
             document.querySelector("video");
-        //3Dモデルの画像を取得
+
         const arCanvas =
             this.scene.canvas;
 
 
-        if (!video) {
-            console.error("カメラ映像が見つかりません");
+        if (!video || !arCanvas) {
             this.showUI(uiElements);
             return;
         }
 
-        if (!arCanvas) {
-            console.error("A-FrameのCanvasが見つかりません");
-            this.showUI(uiElements);
-            return;
-        }
+
+        // スマホ画面と同じサイズのCanvasを作成
+        const canvas =
+            document.createElement("canvas");
+
+        canvas.width =
+            window.innerWidth;
+
+        canvas.height =
+            window.innerHeight;
+
+
+        const ctx =
+            canvas.getContext("2d");
 
 
         /*
-         * A-FrameのWebGLを明示的に再描画
+        * カメラ映像
+        *
+        * 画面全体を覆うように描画
         */
-        this.scene.renderer.render(
-            this.scene.object3D,
-            this.scene.camera
+        const videoAspect =
+            video.videoWidth / video.videoHeight;
+
+        const screenAspect =
+            canvas.width / canvas.height;
+
+        let videoWidth;
+        let videoHeight;
+        let videoX;
+        let videoY;
+
+
+        if (videoAspect > screenAspect) {
+
+            videoHeight =
+                canvas.height;
+
+            videoWidth =
+                videoHeight * videoAspect;
+
+            videoX =
+                (canvas.width - videoWidth) / 2;
+
+            videoY = 0;
+
+        } else {
+
+            videoWidth =
+                canvas.width;
+
+            videoHeight =
+                videoWidth / videoAspect;
+
+            videoX = 0;
+
+            videoY =
+                (canvas.height - videoHeight) / 2;
+        }
+
+
+        ctx.drawImage(
+            video,
+            videoX,
+            videoY,
+            videoWidth,
+            videoHeight
         );
 
 
         /*
-         * 描画が完了してからCanvasを取得
+        * A-Frame Canvas
+        *
+        * 画面上のA-Frame Canvasと
+        * 同じ大きさにする
         */
-        requestAnimationFrame(() => {
-
-            // 出力Canvas
-            const canvas =
-                document.createElement("canvas");
+        const arRect =
+            arCanvas.getBoundingClientRect();
 
 
-            canvas.width =
-                video.videoWidth;
-
-            canvas.height =
-                video.videoHeight;
-
-
-            const ctx =
-                canvas.getContext("2d");
+        ctx.drawImage(
+            arCanvas,
+            arRect.left,
+            arRect.top,
+            arRect.width,
+            arRect.height
+        );
 
 
-            // カメラ映像を描画
-            ctx.drawImage(
-                video,
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
+        // UIを再表示
+        this.showUI(uiElements);
 
 
-            // AR Canvasの縦横比を維持
-            const arAspect =
-                arCanvas.width / arCanvas.height;
+        // 保存
+        const image =
+            canvas.toDataURL("image/png");
 
-            const outputAspect =
-                canvas.width / canvas.height;
+        const link =
+            document.createElement("a");
 
-            let drawWidth;
-            let drawHeight;
-            let drawX;
-            let drawY;
+        link.href = image;
 
-            if (arAspect > outputAspect) {
+        link.download =
+            `ar-screenshot-${Date.now()}.png`;
 
-                // AR Canvasの方が横長
-                drawWidth = canvas.width;
-                drawHeight = canvas.width / arAspect;
-
-                drawX = 0;
-                drawY = (canvas.height - drawHeight) / 2;
-
-            } else {
-
-                // AR Canvasの方が縦長
-                drawHeight = canvas.height;
-                drawWidth = canvas.height * arAspect;
-
-                drawX = (canvas.width - drawWidth) / 2;
-                drawY = 0;
-            }
-
-
-            // ARモデルを描画
-            ctx.drawImage(
-                arCanvas,
-                drawX,
-                drawY,
-                drawWidth,
-                drawHeight
-            );
-
-
-            /*
-            * UIを再表示
-             */
-            this.showUI(uiElements);
-
-
-            /*
-            * PNGとして保存
-            */
-            const image =
-                canvas.toDataURL("image/png");
-
-
-            const link =
-                document.createElement("a");
-
-            link.href = image;
-
-            link.download =
-                `ar-screenshot-${Date.now()}.png`;
-
-            link.click();
-
-        });
+        link.click();
     },
 
 
