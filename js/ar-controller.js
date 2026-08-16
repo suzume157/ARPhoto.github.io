@@ -65,16 +65,12 @@ const ScreenshotController = {
     capture() {
 
         const uiElements =
-            document.querySelectorAll(
-                ".screenshot-ignore"
-            );
+            document.querySelectorAll(".screenshot-ignore");
 
 
         // UIを非表示
         for (const element of uiElements) {
-
             element.style.display = "none";
-
         }
 
 
@@ -86,85 +82,96 @@ const ScreenshotController = {
 
 
         if (!video) {
-
-            console.error(
-                "カメラ映像が見つかりません"
-            );
-
+            console.error("カメラ映像が見つかりません");
             this.showUI(uiElements);
-
             return;
         }
-
 
         if (!arCanvas) {
-
-            console.error(
-                "A-FrameのCanvasが見つかりません"
-            );
-
+            console.error("A-FrameのCanvasが見つかりません");
             this.showUI(uiElements);
-
             return;
         }
 
 
-        // 出力Canvas
-        const canvas =
-            document.createElement("canvas");
-
-
-        canvas.width =
-            video.videoWidth;
-
-        canvas.height =
-            video.videoHeight;
-
-
-        const ctx =
-            canvas.getContext("2d");
-
-
-        // カメラ映像を描画
-        ctx.drawImage(
-            video,
-            0,
-            0,
-            canvas.width,
-            canvas.height
+        /*
+         * A-FrameのWebGLを明示的に再描画
+        */
+        this.scene.renderer.render(
+            this.scene.object3D,
+            this.scene.camera
         );
 
 
-        // ARモデルを描画
-        ctx.drawImage(
-            arCanvas,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
+        /*
+         * 描画が完了してからCanvasを取得
+        */
+        requestAnimationFrame(() => {
+
+            // 出力Canvas
+            const canvas =
+                document.createElement("canvas");
 
 
-        // UIを再表示
-        this.showUI(uiElements);
+            canvas.width =
+                video.videoWidth;
+
+            canvas.height =
+                video.videoHeight;
 
 
-        // PNGとして保存
-        const image =
-            canvas.toDataURL("image/png");
+            const ctx =
+                canvas.getContext("2d");
 
 
-        const link =
-            document.createElement("a");
+            /*
+             * ① カメラ映像
+            */
+            ctx.drawImage(
+                video,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
 
 
-        link.href = image;
+            /*
+             * ② ARモデル
+             */
+            ctx.drawImage(
+                arCanvas,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
 
-        link.download =
-            `ar-screenshot-${Date.now()}.png`;
+
+            /*
+            * UIを再表示
+             */
+            this.showUI(uiElements);
 
 
-        link.click();
+            /*
+            * PNGとして保存
+            */
+            const image =
+                canvas.toDataURL("image/png");
+
+
+            const link =
+                document.createElement("a");
+
+            link.href = image;
+
+            link.download =
+                `ar-screenshot-${Date.now()}.png`;
+
+            link.click();
+
+        });
     },
 
 
