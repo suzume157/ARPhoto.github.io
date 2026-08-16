@@ -183,30 +183,6 @@ const ScreenshotController = {
 
         }
     }
-
-    console.log(
-    "video:",
-    video.videoWidth,
-    video.videoHeight
-);
-
-console.log(
-    "AR Canvas:",
-    arCanvas.width,
-    arCanvas.height
-);
-
-console.log(
-    "AR Canvas CSS:",
-    arCanvas.clientWidth,
-    arCanvas.clientHeight
-);
-
-console.log(
-    "screen:",
-    window.innerWidth,
-    window.innerHeight
-);
 };
 
 /**
