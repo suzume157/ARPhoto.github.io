@@ -86,7 +86,14 @@ const ScreenshotController = {
         }
 
 
-        // スマホ画面と同じサイズのCanvasを作成
+        // A-Frameを再描画
+        this.scene.renderer.render(
+            this.scene.object3D,
+            this.scene.camera
+        );
+
+
+        // スマホ画面と同じサイズのCanvas
         const canvas =
             document.createElement("canvas");
 
@@ -103,9 +110,8 @@ const ScreenshotController = {
 
         /*
         * カメラ映像
-        *
-        * 画面全体を覆うように描画
         */
+
         const videoAspect =
             video.videoWidth / video.videoHeight;
 
@@ -156,17 +162,19 @@ const ScreenshotController = {
 
 
         /*
-        * A-Frame Canvas
-        *
-        * 画面上のA-Frame Canvasと
-        * 同じ大きさにする
+        * ARモデル
         */
+
         const arRect =
             arCanvas.getBoundingClientRect();
 
 
         ctx.drawImage(
             arCanvas,
+            0,
+            0,
+            arCanvas.width,
+            arCanvas.height,
             arRect.left,
             arRect.top,
             arRect.width,
@@ -178,7 +186,10 @@ const ScreenshotController = {
         this.showUI(uiElements);
 
 
-        // 保存
+        /*
+        * 保存
+        */
+
         const image =
             canvas.toDataURL("image/png");
 
