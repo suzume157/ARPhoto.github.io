@@ -73,10 +73,10 @@ const ScreenshotController = {
             element.style.display = "none";
         }
 
-
+        //カメラから見える画像の取得
         const video =
             document.querySelector("video");
-
+        //3Dモデルの画像を取得
         const arCanvas =
             this.scene.canvas;
 
@@ -183,6 +183,30 @@ const ScreenshotController = {
 
         }
     }
+
+    console.log(
+    "video:",
+    video.videoWidth,
+    video.videoHeight
+);
+
+console.log(
+    "AR Canvas:",
+    arCanvas.width,
+    arCanvas.height
+);
+
+console.log(
+    "AR Canvas CSS:",
+    arCanvas.clientWidth,
+    arCanvas.clientHeight
+);
+
+console.log(
+    "screen:",
+    window.innerWidth,
+    window.innerHeight
+);
 };
 
 /**
