@@ -124,9 +124,7 @@ const ScreenshotController = {
                 canvas.getContext("2d");
 
 
-            /*
-             * ① カメラ映像
-            */
+            // カメラ映像を描画
             ctx.drawImage(
                 video,
                 0,
@@ -136,15 +134,45 @@ const ScreenshotController = {
             );
 
 
-            /*
-             * ② ARモデル
-             */
+            // AR Canvasの縦横比を維持
+            const arAspect =
+                arCanvas.width / arCanvas.height;
+
+            const outputAspect =
+                canvas.width / canvas.height;
+
+            let drawWidth;
+            let drawHeight;
+            let drawX;
+            let drawY;
+
+            if (arAspect > outputAspect) {
+
+                // AR Canvasの方が横長
+                drawWidth = canvas.width;
+                drawHeight = canvas.width / arAspect;
+
+                drawX = 0;
+                drawY = (canvas.height - drawHeight) / 2;
+
+            } else {
+
+                // AR Canvasの方が縦長
+                drawHeight = canvas.height;
+                drawWidth = canvas.height * arAspect;
+
+                drawX = (canvas.width - drawWidth) / 2;
+                drawY = 0;
+            }
+
+
+            // ARモデルを描画
             ctx.drawImage(
                 arCanvas,
-                0,
-                0,
-                canvas.width,
-                canvas.height
+                drawX,
+                drawY,
+                drawWidth,
+                drawHeight
             );
 
 
