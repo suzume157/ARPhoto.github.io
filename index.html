@@ -24,7 +24,7 @@
     <a-scene embedded arjs="debugUIEnabled:false;" renderer="gammaOutput: true; preserveDrawingBuffer: true;" vr-mode-ui="enabled: false">
         <!-- assets -->
         <a-assets>
-            <a-asset-item id="ARmodel" src="./models/dinxstrong.glb"></a-asset-item>
+            <a-asset-item id="ARmodel" src="./models/sexmaster.glb"></a-asset-item>
         </a-assets>
 
         <!-- marker -->
@@ -36,6 +36,7 @@
         <!-- camera -->
         <a-entity camera></a-entity>
     </a-scene>
+    <button id="model-switch-button" class="screenshot-ignore">モデル切替</button>
     <button id="screenshot-button" class="screenshot-ignore">📷</button>
     <!-- JavaScript -->
     <script src="./js/ar-model-controller.js"></script>

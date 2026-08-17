@@ -90,6 +90,4 @@ const ScreenshotController = {
 };
 
 //ページ読み込み後に初期化
-window.addEventListener("DOMContentLoaded", () => {
-    ScreenshotController.init();
-});
+window.addEventListener("DOMContentLoaded", () => {ScreenshotController.init();});

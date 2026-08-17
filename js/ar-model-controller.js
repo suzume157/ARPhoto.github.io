@@ -32,6 +32,4 @@ const ARModelController = {
 };
 
 //ページ読み込み後に初期化
-window.addEventListener("DOMContentLoaded", () => {
-    ARModelController.init();
-});
+window.addEventListener("DOMContentLoaded", () => {ARModelController.init();});

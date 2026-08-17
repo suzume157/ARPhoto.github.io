@@ -69,3 +69,27 @@
 
     background: white;
 }
+
+/*モデル切り替え用ボタン*/
+#model-switch-button{
+    position: fixed;
+
+    width: 100px;
+    height: 30px;
+
+    bottom: 20px;
+    left: 30%;
+
+    transform: translate(-50%);
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 99999 !important;
+
+    border: 2px solid black;
+    border-radius: 50%;
+
+    background: white;
+}
