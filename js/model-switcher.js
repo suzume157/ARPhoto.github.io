@@ -3,7 +3,9 @@ const ModelSwitcher = {
 
     models: [
         "./models/sexmaster.glb",
-        "./models/dinxstrong.glb"
+        "./models/dinxstrong.glb",
+        "./models/mao1.glb",
+        "./models/mao2.glb"
     ],
 
     init(){

@@ -78,9 +78,9 @@
     height: 30px;
 
     bottom: 20px;
-    left: 30%;
+    left: 25%;
 
-    transform: translate(-50%);
+    transform: translateX(-50%);
     
     display: flex;
     align-items: center;
@@ -89,7 +89,7 @@
     z-index: 99999 !important;
 
     border: 2px solid black;
-    border-radius: 50%;
+    border-radius: 5px;
 
     background: white;
 }
