@@ -2,7 +2,6 @@ const ModelSwitcher = {
     currentModel: 0,
 
     models: [
-        "./models/sexmaster.glb",
         "./models/dinkstrong.glb",
         "./models/mao1.glb",
         "./models/mao2.glb",
