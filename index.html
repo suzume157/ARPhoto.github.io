@@ -24,13 +24,13 @@
     <a-scene embedded arjs="debugUIEnabled:false;" renderer="gammaOutput: true; preserveDrawingBuffer: true;" vr-mode-ui="enabled: false">
         <!-- assets -->
         <a-assets>
-            <a-asset-item id="ARmodel" src="./models/dinkstrong.glb"></a-asset-item>
+            <a-asset-item id="ARmodel" src="./models/mao3.glb"></a-asset-item>
         </a-assets>
 
         <!-- marker -->
         <a-marker id="ar-marker" preset="custom" type="pattern" url="./markers/pattern-marker.patt">
             <!-- ARmodel -->
-            <a-entity id="ar-model" gltf-model="#ARmodel" scale="1 1 1" rotation="-90 0 0" animation-mixer> </a-entity>
+            <a-entity id="ar-model" gltf-model="#ARmodel" scale="1 1 1" rotation="-20 0 0" animation-mixer> </a-entity>
         </a-marker>
 
         <!-- camera -->
