@@ -91,7 +91,6 @@ const ScreenshotController = {
         canvas.toBlob((blob) => {
 
             if (!blob) {
-                console.error("画像の生成に失敗しました");
                 return;
             }
 
@@ -113,7 +112,7 @@ const ScreenshotController = {
                 { type: "image/png" }
             );
 
-            // Web Share APIが利用可能
+            // Web Share API
             if (
                 navigator.share &&
                 navigator.canShare &&
@@ -124,21 +123,17 @@ const ScreenshotController = {
                     files: [file]
                 }).catch(function(error) {
 
-                    // ユーザーがキャンセルした場合は何もしない
-                    if (error.name === "AbortError") {
-                        return;
+                    if (error.name !== "AbortError") {
+                        console.error("共有に失敗しました:", error);
                     }
 
-                    // 共有に失敗した場合
-                    this.showImage(blob);
+                });
 
-                }.bind(this));
-
-                return;
+            } else {
+                console.error(
+                    "このiPhoneではWeb Share APIが利用できません"
+                );
             }
-
-            // Web Share APIが使えない場合
-            this.showImage(blob);
 
             return;
         }
@@ -152,24 +147,14 @@ const ScreenshotController = {
         link.download = fileName;
 
         document.body.appendChild(link);
+
         link.click();
+
         document.body.removeChild(link);
 
         setTimeout(function() {
             URL.revokeObjectURL(url);
         }, 1000);
-    },
-
-    // Safariで画像を表示
-    showImage(blob) {
-
-        const url = URL.createObjectURL(blob);
-
-        window.open(url, "_blank");
-
-        setTimeout(function() {
-            URL.revokeObjectURL(url);
-        }, 60000);
     },
 
     // UIを再表示
