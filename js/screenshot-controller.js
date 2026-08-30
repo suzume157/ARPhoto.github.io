@@ -87,41 +87,65 @@ const ScreenshotController = {
         // UIを再表示
         this.showUI(uiElements);
 
-        // 画像として保存
+        // 画像を生成
         canvas.toBlob((blob) => {
+
             if (!blob) {
                 console.error("画像の生成に失敗しました");
                 return;
             }
 
             this.saveImage(blob);
+
         }, "image/png");
     },
 
-    // Android / iPhoneで画像を保存
     saveImage(blob) {
+
         const fileName = `ar-screenshot-${Date.now()}.png`;
 
-        // Web Share APIが使える場合
-        if (navigator.share && navigator.canShare) {
+        // iPhone / iPad
+        if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+
             const file = new File(
                 [blob],
                 fileName,
                 { type: "image/png" }
             );
 
-            if (navigator.canShare({ files: [file] })) {
-                navigator.share({ files: [file] })
-                    .catch((error) => {
-                        console.log("共有をキャンセルしました", error);
-                    });
+            // Web Share APIが利用可能
+            if (
+                navigator.share &&
+                navigator.canShare &&
+                navigator.canShare({ files: [file] })
+            ) {
+
+                navigator.share({
+                    files: [file]
+                }).catch(function(error) {
+
+                    // ユーザーがキャンセルした場合は何もしない
+                    if (error.name === "AbortError") {
+                        return;
+                    }
+
+                    // 共有に失敗した場合
+                    this.showImage(blob);
+
+                }.bind(this));
 
                 return;
             }
+
+            // Web Share APIが使えない場合
+            this.showImage(blob);
+
+            return;
         }
 
-        // Web Shareが使えない場合
+        // Android
         const url = URL.createObjectURL(blob);
+
         const link = document.createElement("a");
 
         link.href = url;
@@ -131,14 +155,26 @@ const ScreenshotController = {
         link.click();
         document.body.removeChild(link);
 
-        // URLを解放
-        setTimeout(() => {
+        setTimeout(function() {
             URL.revokeObjectURL(url);
         }, 1000);
     },
 
+    // Safariで画像を表示
+    showImage(blob) {
+
+        const url = URL.createObjectURL(blob);
+
+        window.open(url, "_blank");
+
+        setTimeout(function() {
+            URL.revokeObjectURL(url);
+        }, 60000);
+    },
+
     // UIを再表示
     showUI(uiElements) {
+
         for (const element of uiElements) {
             element.style.display = "";
         }
